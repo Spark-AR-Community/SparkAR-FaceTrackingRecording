@@ -1,54 +1,59 @@
 //FaceTrackingRecording by @Juanmv94
-const Diagnostics = require('Diagnostics');
+
+/* CONFIGURATION */
+
+const frameRate = 1;
+const numFrames = 34;
+
+/* END CONFIGURATION */
+
+const {log} = require('Diagnostics');
 const Patches = require('Patches');
 const Time = require('Time');
 const R = require('Reactive');
 
-const frameRate = 1;
-const numFrames = 34;
-const intervalms = 1000/frameRate;
+const intervalms = 1000 / frameRate;
 
-var frame=0;
-var recording=new Array(numFrames);
-var waiting=true;
-var interval=null;
+var frame = 0;
+var recording = new Array(numFrames);
+var waiting = true;
+var interval = null;
 
-var head;
-
-Promise.all([Patches.outputs.getVector("pos"),Patches.outputs.getVector("rot")]).then(function(h){
-	head=h;
-	Patches.outputs.getPulse("start").then(function(pv){
-		pv.subscribe(function() {
+Promise.all([
+	Patches.outputs.getVector("pos"), 
+	Patches.outputs.getVector("rot")
+]).then(head => {
+	
+	Patches.outputs.getPulse("start").then((pv) => {
+		pv.subscribe(() => {
 			if (waiting) {
-				waiting=false;
-				Patches.inputs.setBoolean("waiting",false);
-				interval=Time.setInterval(f,intervalms);
-				f();
+				waiting = false;
+				Patches.inputs.setBoolean("waiting", false);
+				interval = Time.setInterval(onFrame, intervalms);
+				onFrame();
 			}
 		});
-		Patches.inputs.setBoolean("waiting",true);
+		Patches.inputs.setBoolean("waiting", true);
 	});
-});
 
-function f() {
-	var posx=head[0].x.pinLastValue();
-	var posy=head[0].y.pinLastValue();
-	var posz=head[0].z.pinLastValue();
-	
-	var rotx=head[1].x.pinLastValue();
-	var roty=head[1].y.pinLastValue();
-	var rotz=head[1].z.pinLastValue();
-	
-	recording[frame++]={"posx":posx,"posy":posy,"posz":posz,"rotx":rotx,"roty":roty,"rotz":rotz};
-	Patches.inputs.setPulse("frame",R.once());
-	if (frame==numFrames) {
-		Time.clearInterval(interval);
-		Diagnostics.log("Recording completed! var Recording=");
-		Diagnostics.log(recording);
-		Patches.inputs.setBoolean("waiting",true);
-		waiting=true;
+	function onFrame() {
+		const [posx, posy, posz, rotx, roty, rotz] = [
+			head[0].x.pinLastValue(),
+			head[0].y.pinLastValue(),
+			head[0].z.pinLastValue(),
+			head[1].x.pinLastValue(),
+			head[1].y.pinLastValue(),
+			head[1].z.pinLastValue(),
+		]
+
+		recording[frame++] = { posx, posy, posz, rotx, roty, rotz };
+		Patches.inputs.setPulse("frame", R.once());
+		if (frame == numFrames) {
+			Time.clearInterval(interval);
+			log("Recording completed!")
+			log("module.exports = " + JSON.stringify(recording));
+			Patches.inputs.setBoolean("waiting", true);
+			waiting = true;
+		}
 	}
-}
-
-
-
+});

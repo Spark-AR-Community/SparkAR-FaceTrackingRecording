@@ -16,10 +16,8 @@ For generating JPGs in your working directory use:
 Where *-r 15* means your desired framerate. If you don't want to change the framerate omit this parameter.
 Keep in mind that your video must be in vertical ratio, so edit it if isn't. You can add the *vf=crop...* filter from FFMPEG for this.
 
-Then you need to generate a webm file at 1fps (recomended) with frame counter for the recording project. Use:
+Then you need to generate a webm file at 1fps (recomended) with frame counter for the recording project. For generating this file with translucent white frame counter on the center of the screen, use:
 >ffmpeg -r 1 -i %04d.jpg -vf "drawtext=text='%{frame_num}':start_number=1:x=0:y=0:fontsize=40:fontcolor=0xFFFFFFCC" -intra camera.webm
-
-for generating this file with translucid white frame counter on the center of the screen.
 
 
 #### 2. Open the record project
@@ -30,7 +28,6 @@ You also need to edit the constants in **scripts/script.js**
 ```javascript
 const frameRate = 1;
 const numFrames = 34;
-const intervalms = 1000/frameRate;
 ```
 change the constant **numFrames** to the number of frames you have generated.
 
@@ -51,10 +48,10 @@ You should copy this **full** array for the **Play** script.
 #### 3. Open the play project
 * Open the project and replace the dummy Texture Secuence *00[1-34]* with yours (Delete it and import from computer all your JPGs. When imported, change the type at the right menu to "Texture Secuence". Add this new texture sequence to *animationSequence0*). **Remember to disable compression!**
 * Change the **frameRate** and **numFrames** Script constants with your desired values.
-* Finally, you should replace the dummy recording from **scripts/script.js** in this project with yours. It must be placed in the value of **const recording**.
+* Finally, you should replace the dummy recording from **scripts/recording.js** in this project with yours. It must be placed in the value of **module.exports**.
 ```javascript
 //Insert your recording here!
-const recording=[{"posx":-0.007241778075695038,"posy":-0.03252420201897621,"posz":-0.5028273463249207,"rotx":-8.999058723449707,"roty":4.387806415557861,"rotz":2.962066173553467},{"posx":-0.007218386046588421,"posy":-0.02704869583249092,"posz":-0.5050930380821228,"rotx":-11.640742301940918,"roty":5.620565414428711,"rotz":5.489805221557617},...];
+module.exports=[{"posx":-0.007241778075695038,"posy":-0.03252420201897621,"posz":-0.5028273463249207,"rotx":-8.999058723449707,"roty":4.387806415557861,"rotz":2.962066173553467},{"posx":-0.007218386046588421,"posy":-0.02704869583249092,"posz":-0.5050930380821228,"rotx":-11.640742301940918,"roty":5.620565414428711,"rotz":5.489805221557617},...];
 ```
 * You can also tune other parameters like the ambient/directional light intensity, skin smoothing (Material 2), face cut dimensions (SDF Ellipse), and face brightness/rgb dominant color (Pack4 first 3 values).
 

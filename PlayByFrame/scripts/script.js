@@ -2,8 +2,8 @@
 
 /* CONFIGURATION */
 
-const frameRate = 15;
-const numFrames = 34;
+const frameRate = 12;
+const numFrames = 12 * 8;
 
 // Insert your recording data in recording.js!
 const recording = require('./recording.js');
@@ -32,7 +32,7 @@ const poslist = recording.map(el => {
 	];
 });
 
-var timer, frame = 0;
+var timer, frame = 1;
 
 Promise.all([
 	Textures.findFirst('animationSequence0'),

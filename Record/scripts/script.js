@@ -3,7 +3,7 @@
 /* CONFIGURATION */
 
 const frameRate = 1;
-const numFrames = 34;
+const numFrames = 12*8;
 
 /* END CONFIGURATION */
 
@@ -24,17 +24,17 @@ Promise.all([
 	Patches.outputs.getVector("rot")
 ]).then(head => {
 	
-	Patches.outputs.getPulse("start").then((pv) => {
-		pv.subscribe(() => {
-			if (waiting) {
-				waiting = false;
+	// Patches.outputs.getPulse("start").then((pv) => {
+	// 	pv.subscribe(() => {
+	// 		if (waiting) {
+	// 			waiting = false;
 				Patches.inputs.setBoolean("waiting", false);
 				interval = Time.setInterval(onFrame, intervalms);
 				onFrame();
-			}
-		});
-		Patches.inputs.setBoolean("waiting", true);
-	});
+			// }
+		// });
+	// 	Patches.inputs.setBoolean("waiting", true);
+	// });
 
 	function onFrame() {
 		const [posx, posy, posz, rotx, roty, rotz] = [
